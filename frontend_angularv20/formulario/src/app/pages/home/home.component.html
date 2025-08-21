@@ -1,0 +1,176 @@
+<!-- home.component.html -->
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo-icon">🏢</div>
+        <div class="logo-text">
+          <h1>Sistema de Registro</h1>
+          <p>Panel de Control</p>
+        </div>
+      </div>
+      <div class="user-section">
+        <div class="user-info">
+          <span class="user-name">Administrador</span>
+          <span class="user-role">Sistema</span>
+        </div>
+        <div class="user-avatar">👤</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <div class="welcome-content">
+        <h2>Bienvenido al Sistema</h2>
+        <p> Proceso de selección para Experto en Desarrollo Frontend </p>
+        <p> Tecnologias utilizadas AngularV20, Laravel 11,PostgreSQL. </p>
+        <p> Dashboard Chart.js. </p>
+      </div>
+    </section>
+
+    <!-- Stats Cards -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <h3>{{ personas.length }}</h3>
+            <p>Registros Totales</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <h3>100%</h3>
+            <p>Disponibilidad</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <h3>Activo</h3>
+            <p>Estado Sistema</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔒</div>
+          <div class="stat-content">
+            <h3>Seguro</h3>
+            <p>Datos Protegidos</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="actions-section">
+      <h3>Acciones Rápidas</h3>
+      <div class="actions-grid">
+        <button class="action-card primary" (click)="nuevoRegistro()">
+          <div class="action-icon">📝</div>
+          <div class="action-content">
+            <h4>Nuevo Registro</h4>
+            <p>Crear una nueva entrada en el sistema</p>
+          </div>
+          <div class="action-arrow">→</div>
+        </button>
+        
+        <button class="action-card secondary" (click)="verReportes()">
+          <div class="action-icon">📈</div>
+          <div class="action-content">
+            <h4>Ver Reportes</h4>
+            <p>Consultar estadísticas y métricas</p>
+          </div>
+          <div class="action-arrow">→</div>
+        </button>
+        
+        <button class="action-card tertiary" (click)="configuracion()">
+          <div class="action-icon">⚙️</div>
+          <div class="action-content">
+            <h4>Configuración</h4>
+            <p>Ajustar parámetros del sistema</p>
+          </div>
+          <div class="action-arrow">→</div>
+        </button>
+        
+        <button class="action-card test" (click)="irAPruebas()">
+          <div class="action-icon">🧪</div>
+          <div class="action-content">
+            <h4>Probar API</h4>
+            <p>Verificar conexión con el backend</p>
+          </div>
+          <div class="action-arrow">→</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-section" *ngIf="personas.length > 0">
+      <div class="charts-header">
+        <h3>Estadísticas del Sistema</h3>
+        <button class="refresh-btn" (click)="actualizarGraficos()">
+          <span>🔄</span>
+          Actualizar Gráficos
+        </button>
+      </div>
+      <div class="charts-grid">
+        <!-- Gráfico de Barras - Profesiones -->
+        <div class="chart-container">
+          <div class="chart-card">
+            <canvas #professionChart></canvas>
+          </div>
+        </div>
+        
+        <!-- Gráfico de Pastel - Edades -->
+        <div class="chart-container">
+          <div class="chart-card">
+            <canvas #ageChart></canvas>
+          </div>
+        </div>
+        
+        <!-- Gráfico de Líneas - Mensual -->
+        <div class="chart-container full-width">
+          <div class="chart-card">
+            <canvas #monthlyChart></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="activity-section" *ngIf="personas.length > 0">
+      <div class="activity-header">
+        <h3>Actividad Reciente</h3>
+        <button class="refresh-activity-btn" (click)="recargarDatos()">
+          <span>🔄</span>
+          Actualizar
+        </button>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let persona of personas.slice(-3).reverse(); let i = index">
+          <div class="activity-icon">✅</div>
+          <div class="activity-content">
+            <p><strong>{{ persona.first_name }} {{ persona.last_name }}</strong> fue registrado</p>
+            <span class="activity-time">Recientemente</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <section class="empty-section" *ngIf="personas.length === 0">
+      <div class="empty-content">
+        <div class="empty-icon">📋</div>
+        <h3>No hay registros aún</h3>
+        <p>Comienza creando tu primer registro en el sistema</p>
+        <button class="empty-btn" (click)="nuevoRegistro()">
+          Crear Primer Registro
+        </button>
+      </div>
+    </section>
+  </main>
+</div>

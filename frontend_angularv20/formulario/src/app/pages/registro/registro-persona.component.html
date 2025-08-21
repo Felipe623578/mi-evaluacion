@@ -1,0 +1,302 @@
+<!-- registro-persona.component.html -->
+<div class="elegant-form-container">
+  <!-- Header -->
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" (click)="volver()">
+          <span class="back-icon">←</span>
+          <span>Volver al Dashboard</span>
+        </button>
+      </div>
+      <div class="header-center">
+        <h1>📝 Gestión de Registros</h1>
+        <p>Administra todos los registros de personas</p>
+      </div>
+      <div class="header-right">
+        <div class="form-counter">
+          <span class="counter-number">{{ personas.length }}</span>
+          <span class="counter-label">Registros</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="form-main">
+    <!-- Add Button Section -->
+    <div class="add-section">
+      <button class="add-registro-btn" (click)="abrirModal()">
+        <span class="add-icon">➕</span>
+        <span>Agregar Nuevo Registro</span>
+      </button>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-section">
+      <div class="table-header">
+        <h2>📊 Registros Guardados</h2>
+        <p>Total de registros: {{ personas.length }}</p>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-table" *ngIf="personas.length === 0">
+        <div class="empty-icon">📋</div>
+        <h3>No hay registros aún</h3>
+        <p>Comienza agregando tu primer registro</p>
+      </div>
+
+      <!-- Data Table -->
+      <div class="data-table" *ngIf="personas.length > 0">
+        <table class="registros-table">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>ID</th>
+              <th>Foto</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Edad</th>
+              <th>Profesión</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let persona of personas; trackBy: trackByPersona; let i = index">
+              <td class="number-cell">{{ i + 1 }}</td>
+              <td class="id-cell">{{ persona.id }}</td>
+              <td class="photo-cell">
+                <img *ngIf="persona.photo_url" [src]="persona.photo_url" alt="Photo" class="persona-photo">
+                <div *ngIf="!persona.photo_url" class="no-photo">📷</div>
+              </td>
+              <td class="first-name-cell">{{ persona.first_name }}</td>
+              <td class="last-name-cell">{{ persona.last_name }}</td>
+              <td class="age-cell">{{ persona.age }} años</td>
+              <td class="profession-cell">
+                <span class="profession-badge">{{ traducirProfesion(persona.profession) }}</span>
+              </td>
+              <td class="phone-cell">{{ persona.phone }}</td>
+              <td class="address-cell">{{ persona.address }}</td>
+              <td class="acciones-cell">
+                <button class="action-btn edit-btn" (click)="editarPersona(persona)" title="Editar">
+                  ✏️
+                </button>
+                <button class="action-btn delete-btn" (click)="eliminarPersona(persona.id)" title="Eliminar">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Agregar/Editar Registro -->
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2>{{ editandoPersona ? '✏️ Editar Registro' : '➕ Nuevo Registro' }}</h2>
+      <button class="modal-close-btn" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <form [formGroup]="formularioModal" (ngSubmit)="guardarRegistro()" class="modal-form">
+        <!-- Row 1: Nombre y Apellido -->
+        <div class="field-row">
+          <div class="field-group">
+            <label for="modal-first_name">Nombre *</label>
+            <input 
+              type="text" 
+              id="modal-first_name"
+              formControlName="first_name"
+              placeholder="Ingrese el nombre"
+              class="form-input"
+              [class.error]="formularioModal.get('first_name')?.invalid && formularioModal.get('first_name')?.touched"
+            >
+            <div class="error-message" *ngIf="formularioModal.get('first_name')?.invalid && formularioModal.get('first_name')?.touched">
+              <span *ngIf="formularioModal.get('first_name')?.errors?.['required']">El nombre es requerido</span>
+              <span *ngIf="formularioModal.get('first_name')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="modal-last_name">Apellido *</label>
+            <input 
+              type="text" 
+              id="modal-last_name"
+              formControlName="last_name"
+              placeholder="Ingrese el apellido"
+              class="form-input"
+              [class.error]="formularioModal.get('last_name')?.invalid && formularioModal.get('last_name')?.touched"
+            >
+            <div class="error-message" *ngIf="formularioModal.get('last_name')?.invalid && formularioModal.get('last_name')?.touched">
+              <span *ngIf="formularioModal.get('last_name')?.errors?.['required']">El apellido es requerido</span>
+              <span *ngIf="formularioModal.get('last_name')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Fecha de Nacimiento y Edad -->
+        <div class="field-row">
+          <div class="field-group">
+            <label for="modal-birth_date">Fecha de Nacimiento *</label>
+            <input 
+              type="date" 
+              id="modal-birth_date"
+              formControlName="birth_date"
+              [max]="getMaxDate()"
+              class="form-input"
+              [class.error]="formularioModal.get('birth_date')?.invalid && formularioModal.get('birth_date')?.touched"
+            >
+            <div class="error-message" *ngIf="formularioModal.get('birth_date')?.invalid && formularioModal.get('birth_date')?.touched">
+              <span *ngIf="formularioModal.get('birth_date')?.errors?.['required']">La fecha de nacimiento es requerida</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="modal-age">Edad</label>
+            <input 
+              type="text" 
+              id="modal-age"
+              formControlName="age"
+              placeholder="Calculada automáticamente"
+              class="form-input readonly"
+              readonly
+            >
+          </div>
+        </div>
+
+        <!-- Row 3: Profesión y Teléfono -->
+        <div class="field-row">
+          <div class="field-group">
+            <label for="modal-profession">Profesión *</label>
+            <select 
+              id="modal-profession"
+              formControlName="profession"
+              class="form-select"
+              [class.error]="formularioModal.get('profession')?.invalid && formularioModal.get('profession')?.touched"
+            >
+              <option value="">Seleccione una profesión</option>
+              <option value="Engineer">Ingeniero</option>
+              <option value="Doctor">Médico</option>
+              <option value="Lawyer">Abogado</option>
+              <option value="Teacher">Profesor</option>
+              <option value="Accountant">Contador</option>
+              <option value="Architect">Arquitecto</option>
+              <option value="Nurse">Enfermero</option>
+              <option value="Designer">Diseñador</option>
+              <option value="Programmer">Programador</option>
+              <option value="Administrator">Administrador</option>
+              <option value="Salesperson">Vendedor</option>
+              <option value="Student">Estudiante</option>
+              <option value="Other">Otro</option>
+            </select>
+            <div class="error-message" *ngIf="formularioModal.get('profession')?.invalid && formularioModal.get('profession')?.touched">
+              <span *ngIf="formularioModal.get('profession')?.errors?.['required']">La profesión es requerida</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="modal-phone">Teléfono *</label>
+            <input 
+              type="tel" 
+              id="modal-phone"
+              formControlName="phone"
+              placeholder="Ej: 3001234567"
+              class="form-input"
+              [class.error]="formularioModal.get('phone')?.invalid && formularioModal.get('phone')?.touched"
+            >
+            <div class="error-message" *ngIf="formularioModal.get('phone')?.invalid && formularioModal.get('phone')?.touched">
+              <span *ngIf="formularioModal.get('phone')?.errors?.['required']">El teléfono es requerido</span>
+              <span *ngIf="formularioModal.get('phone')?.errors?.['pattern']">Formato inválido (solo números)</span>
+              <span *ngIf="formularioModal.get('phone')?.errors?.['minlength']">Mínimo 7 dígitos</span>
+              <span *ngIf="formularioModal.get('phone')?.errors?.['maxlength']">Máximo 10 dígitos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Correo -->
+        <div class="field-row">
+          <div class="field-group full-width">
+            <label for="modal-email">Correo *</label>
+            <input 
+              type="email" 
+              id="modal-email"
+              formControlName="email"
+              placeholder="Ingrese dirección de correo"
+              class="form-input"
+              [class.error]="formularioModal.get('email')?.invalid && formularioModal.get('email')?.touched"
+            >
+            <div class="error-message" *ngIf="formularioModal.get('email')?.invalid && formularioModal.get('email')?.touched">
+              <span *ngIf="formularioModal.get('email')?.errors?.['required']">El correo es requerido</span>
+              <span *ngIf="formularioModal.get('email')?.errors?.['email']">Por favor ingrese una dirección de correo válida</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Dirección -->
+        <div class="field-row">
+          <div class="field-group full-width">
+            <label for="modal-address">Dirección *</label>
+            <textarea 
+              id="modal-address"
+              formControlName="address"
+              placeholder="Ingrese dirección completa"
+              class="form-textarea"
+              rows="3"
+              [class.error]="formularioModal.get('address')?.invalid && formularioModal.get('address')?.touched"
+            ></textarea>
+            <div class="error-message" *ngIf="formularioModal.get('address')?.invalid && formularioModal.get('address')?.touched">
+              <span *ngIf="formularioModal.get('address')?.errors?.['required']">La dirección es requerida</span>
+              <span *ngIf="formularioModal.get('address')?.errors?.['minlength']">Mínimo 10 caracteres</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Foto -->
+        <div class="field-row">
+          <div class="field-group full-width">
+            <label for="modal-photo_url">Foto</label>
+            <div class="file-upload-container">
+              <input 
+                type="file" 
+                id="modal-photo_url"
+                formControlName="photo_url"
+                accept="image/*"
+                class="file-input"
+                (change)="onFileChangeModal($event)"
+              >
+              <div class="file-upload-box">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">
+                  <span class="upload-title">Seleccionar imagen</span>
+                  <span class="upload-subtitle">JPG, PNG o GIF (máx. 5MB)</span>
+                </div>
+              </div>
+            </div>
+            <div class="file-preview" *ngIf="formularioModal.get('foto')?.value">
+              <img [src]="formularioModal.get('foto')?.value" alt="Preview" class="preview-image">
+              <button type="button" class="remove-file-btn" (click)="removeFileModal()">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel-btn" (click)="cerrarModal()">
+            Cancelar
+          </button>
+          <button type="submit" class="modal-save-btn" >
+            {{ editandoPersona ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+</form>
+    </div>
+  </div>
+</div>

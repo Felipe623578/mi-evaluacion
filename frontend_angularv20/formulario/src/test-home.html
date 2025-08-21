@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Componente Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .test-section {
+            background: white;
+            color: black;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test - Componente Home</h1>
+        
+        <div class="test-section success">
+            <h3>✅ Configuración de Rutas</h3>
+            <p><strong>Archivo:</strong> src/app/app.routes.ts</p>
+            <p><strong>Ruta principal:</strong> '/' → HomeComponent</p>
+            <p><strong>Ruta registro:</strong> '/registro' → RegistroComponent</p>
+        </div>
+        
+        <div class="test-section success">
+            <h3>✅ Componente Home</h3>
+            <p><strong>Archivo:</strong> src/app/pages/home/home.component.ts</p>
+            <p><strong>Template:</strong> src/app/pages/home/home.component.html</p>
+            <p><strong>Estilos:</strong> src/app/pages/home/home.component.css</p>
+        </div>
+        
+        <div class="test-section success">
+            <h3>✅ Configuración Principal</h3>
+            <p><strong>App Component:</strong> src/app/app.ts</p>
+            <p><strong>App Config:</strong> src/app/app.config.ts</p>
+            <p><strong>Main:</strong> src/main.ts</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🚀 Para ejecutar la aplicación:</h3>
+            <ol>
+                <li>Abre Command Prompt (cmd) como administrador</li>
+                <li>Navega al proyecto: <code>cd C:\Users\FELIIX\Documents\FELIPE\angular\formulario</code></li>
+                <li>Ejecuta: <code>npm start</code></li>
+                <li>Abre el navegador en: <a href="http://localhost:4200" style="color: #007bff;">http://localhost:4200</a></li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Lo que deberías ver:</h3>
+            <ul>
+                <li>🏠 PÁGINA INICIAL - HOME</li>
+                <li>✅ Componente Home cargado correctamente</li>
+                <li>📊 Estadísticas (Total de registros: 0)</li>
+                <li>➕ Botón "Nuevo Registro"</li>
+                <li>🧪 Botón "Agregar Datos de Prueba"</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
